@@ -4,9 +4,8 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-export async function POST() {
+export async function GET() {
   try {
-    // Criar tabela User
     await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS "User" (
         "id" TEXT NOT NULL PRIMARY KEY,
@@ -19,7 +18,6 @@ export async function POST() {
       );
     `;
 
-    // Criar tabela Orcamento
     await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS "Orcamento" (
         "id" TEXT NOT NULL PRIMARY KEY,
@@ -45,7 +43,6 @@ export async function POST() {
       );
     `;
 
-    // Criar tabela Observacao
     await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS "Observacao" (
         "id" TEXT NOT NULL PRIMARY KEY,
@@ -57,7 +54,6 @@ export async function POST() {
       );
     `;
 
-    // Criar tabela ServicoRealizado
     await prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS "ServicoRealizado" (
         "id" TEXT NOT NULL PRIMARY KEY,
@@ -74,7 +70,6 @@ export async function POST() {
       );
     `;
 
-    // Criar usuário admin
     const hashedPassword = await bcrypt.hash("malibu2024", 12);
     
     await prisma.$executeRaw`
