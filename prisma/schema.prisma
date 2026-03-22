@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Orcamento {
+  id          String   @id @default(cuid())
+  nome        String
+  telefone    String
+  whatsapp    String?
+  email       String?
+  veiculo     String
+  ano         Int?
+  servico     String
+  descricao   String?
+  imagens     String?
+  valorTotal  Float?
+  itens       String?
+  status      String   @default("PENDENTE")
+  statusPagamento String @default("AGUARDANDO_APROVACAO")
+  observacoesFinanceiro String?
+  dataAprovacao DateTime?
+  dataPagamento DateTime?
+  enviadoAoCliente Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  observacoes Observacao[]
+}
+
+model Observacao {
+  id         String   @id @default(cuid())
+  orcamento  Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  orcamentoId String
+  texto      String
+  createdBy  String
+  createdAt  DateTime @default(now())
+}
+
+model ServicoRealizado {
+  id          String   @id @default(cuid())
+  veiculo     String
+  ano         Int?
+  servico     String
+  descricao   String?
+  valor       Float
+  tipo        String
+  categoria   String
+  data        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
