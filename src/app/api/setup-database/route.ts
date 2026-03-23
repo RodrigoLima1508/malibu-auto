@@ -13,9 +13,9 @@ export async function GET() {
         "password" TEXT NOT NULL,
         "name" TEXT NOT NULL,
         "role" TEXT NOT NULL DEFAULT 'ADMIN',
-        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" TIMESTAMP(3) NOT NULL
-      );
+        "createdAt" TEXT NOT NULL,
+        "updatedAt" TEXT NOT NULL
+      )
     `;
 
     await prisma.$executeRaw`
@@ -30,17 +30,17 @@ export async function GET() {
         "servico" TEXT NOT NULL,
         "descricao" TEXT,
         "imagens" TEXT,
-        "valorTotal" DOUBLE PRECISION,
+        "valorTotal" REAL,
         "itens" TEXT,
         "status" TEXT NOT NULL DEFAULT 'PENDENTE',
         "statusPagamento" TEXT NOT NULL DEFAULT 'AGUARDANDO_APROVACAO',
         "observacoesFinanceiro" TEXT,
-        "dataAprovacao" TIMESTAMP(3),
-        "dataPagamento" TIMESTAMP(3),
-        "enviadoAoCliente" BOOLEAN NOT NULL DEFAULT false,
-        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" TIMESTAMP(3) NOT NULL
-      );
+        "dataAprovacao" TEXT,
+        "dataPagamento" TEXT,
+        "enviadoAoCliente" INTEGER NOT NULL DEFAULT 0,
+        "createdAt" TEXT NOT NULL,
+        "updatedAt" TEXT NOT NULL
+      )
     `;
 
     await prisma.$executeRaw`
@@ -49,9 +49,9 @@ export async function GET() {
         "orcamentoId" TEXT NOT NULL,
         "texto" TEXT NOT NULL,
         "createdBy" TEXT NOT NULL,
-        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        CONSTRAINT "Observacao_orcamentoId_fkey" FOREIGN KEY ("orcamentoId") REFERENCES "Orcamento"("id") ON DELETE CASCADE ON UPDATE CASCADE
-      );
+        "createdAt" TEXT NOT NULL,
+        FOREIGN KEY ("orcamentoId") REFERENCES "Orcamento"("id") ON DELETE CASCADE
+      )
     `;
 
     await prisma.$executeRaw`
@@ -61,29 +61,29 @@ export async function GET() {
         "ano" INTEGER,
         "servico" TEXT NOT NULL,
         "descricao" TEXT,
-        "valor" DOUBLE PRECISION NOT NULL,
+        "valor" REAL NOT NULL,
         "tipo" TEXT NOT NULL,
         "categoria" TEXT NOT NULL,
-        "data" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" TIMESTAMP(3) NOT NULL
-      );
+        "data" TEXT NOT NULL,
+        "createdAt" TEXT NOT NULL,
+        "updatedAt" TEXT NOT NULL
+      )
     `;
 
     const hashedPassword = await bcrypt.hash("malibu2024", 12);
+    const now = new Date().toISOString();
     
     await prisma.$executeRaw`
-      INSERT INTO "User" (id, email, password, name, role, "createdAt", "updatedAt")
+      INSERT INTO "User" ("id", "email", "password", "name", "role", "createdAt", "updatedAt")
       VALUES (
         ${crypto.randomUUID()},
         'admin@malibuautomotiva.com.br',
         ${hashedPassword},
         'Administrador',
         'ADMIN',
-        NOW(),
-        NOW()
+        ${now},
+        ${now}
       )
-      ON CONFLICT (email) DO NOTHING;
     `;
 
     return NextResponse.json({ 
